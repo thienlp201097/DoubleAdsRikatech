@@ -25,6 +25,7 @@ import com.lib.dktechads.utils.AdsManager
 import com.lib.dktechads.utils.AdsManagerAdmod
 
 class MainActivity : AppCompatActivity() {
+
     val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     lateinit var bannerContainer: ViewGroup
     lateinit var nativeLoader: MaxNativeAdLoader
