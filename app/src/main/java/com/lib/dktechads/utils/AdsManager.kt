@@ -10,17 +10,15 @@ import androidx.lifecycle.MutableLiveData
 import com.doubleads.rikatech.dktlibrary.AppOpenManager
 import com.doubleads.rikatech.dktlibrary.ApplovinUtil
 import com.doubleads.rikatech.dktlibrary.GoogleENative
-import com.doubleads.rikatech.dktlibrary.callback_applovin.InterstititialCallback
-import com.doubleads.rikatech.dktlibrary.callback_applovin.InterstititialCallbackNew
-import com.doubleads.rikatech.dktlibrary.callback_applovin.NativeCallBackNew
 import com.doubleads.rikatech.dktlibrary.utils.InterHolder
 import com.doubleads.rikatech.dktlibrary.utils.NativeHolder
 import com.applovin.mediation.MaxAd
-import com.applovin.mediation.MaxError
 import com.applovin.mediation.ads.MaxInterstitialAd
-import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
+import com.doubleads.rikatech.dktlibrary.callback_applovin.InterstititialCallback
+import com.doubleads.rikatech.dktlibrary.callback_applovin.InterstititialCallbackNew
+import com.doubleads.rikatech.dktlibrary.callback_applovin.NativeCallBackNew
 
 
 object AdsManager {
@@ -39,7 +37,11 @@ object AdsManager {
             override fun onAdFail(error: String) {
                 Toast.makeText(activity,"LoadFailed",Toast.LENGTH_SHORT).show()
             }
-        })
+
+                override fun onAdRevenuePaid(ad: MaxAd) {
+
+                }
+            })
     }
     fun loadInter(context: Context){
         ApplovinUtil.loadAnGetInterstitials(context, interHolder,object :
@@ -123,6 +125,10 @@ object AdsManager {
 
             override fun onInterstitialShowSucceed() {
                 AppOpenManager.getInstance().isAppResumeEnabled = false
+            }
+
+            override fun onAdRevenuePaid(ad: MaxAd) {
+
             }
 
         })

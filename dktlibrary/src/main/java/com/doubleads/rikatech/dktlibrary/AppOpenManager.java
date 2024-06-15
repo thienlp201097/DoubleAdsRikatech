@@ -425,6 +425,5 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         }
     }
 
-
 }
 

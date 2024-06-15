@@ -1,14 +1,13 @@
 package com.lib.dktechads
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import com.applovin.mediation.MaxAd
 import com.doubleads.rikatech.dktlibrary.ApplovinUtil
 import com.doubleads.rikatech.dktlibrary.callback_applovin.BannerCallback
 import com.doubleads.rikatech.dktlibrary.callback_applovin.InterstititialCallback
-import com.applovin.mediation.MaxAd
 
 class MainActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +35,10 @@ class MainActivity2 : AppCompatActivity() {
 
                     }
 
+                    override fun onAdRevenuePaid(ad: MaxAd) {
+
+                    }
+
                 })
         }
     }
@@ -46,6 +49,10 @@ class MainActivity2 : AppCompatActivity() {
             }
 
             override fun onBannerShowSucceed() {
+            }
+
+            override fun onAdRevenuePaid(ad: MaxAd) {
+
             }
         })
         super.onResume()

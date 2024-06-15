@@ -10,13 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.doubleads.rikatech.dktlibrary.AdmobUtils
 import com.doubleads.rikatech.dktlibrary.ApplovinUtil
 import com.doubleads.rikatech.dktlibrary.GoogleENative
-import com.doubleads.rikatech.dktlibrary.callback_applovin.BannerCallback
-import com.doubleads.rikatech.dktlibrary.callback_applovin.NativeCallBackNew
-import com.doubleads.rikatech.dktlibrary.callback_applovin.RewardCallback
 import com.doubleads.rikatech.dktlibrary.utils.admod.callback.AdsInterCallBack
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
+import com.doubleads.rikatech.dktlibrary.callback_applovin.BannerCallback
+import com.doubleads.rikatech.dktlibrary.callback_applovin.NativeCallBackNew
+import com.doubleads.rikatech.dktlibrary.callback_applovin.RewardCallback
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.nativead.NativeAd
@@ -167,6 +167,10 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity,"Failed", Toast.LENGTH_SHORT).show()
                 }
 
+                override fun onAdRevenuePaid(ad: MaxAd) {
+
+                }
+
             })
         }
 
@@ -183,6 +187,10 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onAdFail(error: String) {
                     Toast.makeText(this@MainActivity,"Show failed", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onAdRevenuePaid(ad: MaxAd) {
+
                 }
             })
         }
@@ -210,6 +218,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onBannerShowSucceed() {
+                }
+
+                override fun onAdRevenuePaid(ad: MaxAd) {
+
                 }
             })
         }
@@ -275,7 +287,11 @@ class MainActivity : AppCompatActivity() {
             override fun onAdFail(error: String) {
                 Toast.makeText(this@MainActivity,"Show failed", Toast.LENGTH_SHORT).show()
             }
-        })
+
+                override fun onAdRevenuePaid(ad: MaxAd) {
+
+                }
+            })
     }
 
     override fun onResume() {

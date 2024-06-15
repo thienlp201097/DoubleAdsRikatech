@@ -1,7 +1,6 @@
 package com.lib.dktechads
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -9,10 +8,10 @@ import com.doubleads.rikatech.dktlibrary.AdmobUtils
 import com.doubleads.rikatech.dktlibrary.AppOpenManager
 import com.doubleads.rikatech.dktlibrary.ApplovinUtil
 import com.doubleads.rikatech.dktlibrary.R
-import com.doubleads.rikatech.dktlibrary.callback_applovin.NativeCallBackNew
 import com.doubleads.rikatech.dktlibrary.utils.Utils
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.nativeAds.MaxNativeAdView
+import com.doubleads.rikatech.dktlibrary.callback_applovin.NativeCallBackNew
 import com.lib.dktechads.databinding.ActivitySplashBinding
 import com.lib.dktechads.utils.AdsManager
 
@@ -35,7 +34,7 @@ class SplashActivity : AppCompatActivity() {
                     override fun onInitSuccessful() {
                         ApplovinUtil.loadNativeAds(this@SplashActivity,
                             AdsManager.nativeHolder,object :
-                            NativeCallBackNew {
+                                NativeCallBackNew {
                             override fun onNativeAdLoaded(nativeAd: MaxAd?, nativeAdView: MaxNativeAdView?) {
                                 Toast.makeText(this@SplashActivity,"Loaded", Toast.LENGTH_SHORT).show()
                             }
@@ -43,7 +42,11 @@ class SplashActivity : AppCompatActivity() {
                             override fun onAdFail(error: String) {
                                 Toast.makeText(this@SplashActivity,"Failed", Toast.LENGTH_SHORT).show()
                             }
-                        })
+
+                                override fun onAdRevenuePaid(ad: MaxAd) {
+
+                                }
+                            })
                         Utils.getInstance().replaceActivity(this@SplashActivity, MainActivity::class.java)
                     }
                 })

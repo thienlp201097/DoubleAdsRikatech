@@ -23,14 +23,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.adjust.sdk.Adjust
-import com.adjust.sdk.AdjustAdRevenue
-import com.adjust.sdk.AdjustConfig
 import com.airbnb.lottie.LottieAnimationView
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdFormat
 import com.applovin.mediation.MaxAdListener
-import com.applovin.mediation.MaxAdRevenueListener
 import com.applovin.mediation.MaxAdViewAdListener
 import com.applovin.mediation.MaxError
 import com.applovin.mediation.MaxReward
@@ -50,7 +46,6 @@ import com.doubleads.rikatech.dktlibrary.adjust.AdjustUtils
 import com.doubleads.rikatech.dktlibrary.callback_applovin.BannerCallback
 import com.doubleads.rikatech.dktlibrary.callback_applovin.InterstititialCallback
 import com.doubleads.rikatech.dktlibrary.callback_applovin.InterstititialCallbackNew
-import com.doubleads.rikatech.dktlibrary.callback_applovin.NativeAdCallback
 import com.doubleads.rikatech.dktlibrary.callback_applovin.NativeCallBackNew
 import com.doubleads.rikatech.dktlibrary.callback_applovin.RewardCallback
 import com.doubleads.rikatech.dktlibrary.utils.InterHolder
@@ -215,7 +210,10 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-        interstitialAd.setRevenueListener { p0 -> AdjustUtils.postRevenueAdjustMax(p0) }
+        interstitialAd.setRevenueListener { p0 ->
+            callback.onAdRevenuePaid(p0)
+            AdjustUtils.postRevenueAdjustMax(p0)
+        }
         interstitialAd.setListener(object : MaxAdListener {
             override fun onAdLoaded(p0: MaxAd) {
                 activity.lifecycleScope.launch(Dispatchers.Main) {
@@ -357,7 +355,10 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-        interstitialAd.setRevenueListener { p0 -> AdjustUtils.postRevenueAdjustMax(p0) }
+        interstitialAd.setRevenueListener { p0 ->
+            callback.onAdRevenuePaid(p0)
+            AdjustUtils.postRevenueAdjustMax(p0)
+        }
         interstitialAd.setListener(object : MaxAdListener {
             override fun onAdLoaded(p0: MaxAd) {
                 activity.lifecycleScope.launch {
@@ -528,7 +529,10 @@ object ApplovinUtil : LifecycleObserver {
             tagView.findViewById(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmer()
 
-        banner?.setRevenueListener { ad -> AdjustUtils.postRevenueAdjustMax(ad) }
+        banner?.setRevenueListener { ad ->
+            callback.onAdRevenuePaid(ad)
+            AdjustUtils.postRevenueAdjustMax(ad)
+        }
 
         banner?.setListener(object : MaxAdViewAdListener {
             override fun onAdLoaded(p0: MaxAd) {
@@ -612,7 +616,10 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
 
-        rewardAd.setRevenueListener { p0 -> AdjustUtils.postRevenueAdjustMax(p0) }
+        rewardAd.setRevenueListener { p0 ->
+            callback.onAdRevenuePaid(p0)
+            AdjustUtils.postRevenueAdjustMax(p0)
+        }
         rewardAd.setListener(object : MaxRewardedAdListener {
             override fun onAdLoaded(p0: MaxAd) {
                 activity.lifecycleScope.launch(Dispatchers.Main) {
@@ -787,7 +794,10 @@ object ApplovinUtil : LifecycleObserver {
             return
         }
         nativeAdLoader = MaxNativeAdLoader(idAd, activity)
-        nativeAdLoader.setRevenueListener { ad -> AdjustUtils.postRevenueAdjustMax(ad) }
+        nativeAdLoader.setRevenueListener { ad ->
+            adCallback.onAdRevenuePaid(ad)
+            AdjustUtils.postRevenueAdjustMax(ad)
+        }
         nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
 
             override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, p1: MaxAd) {
@@ -816,14 +826,14 @@ object ApplovinUtil : LifecycleObserver {
         idAd: String,
         nativeAdContainer: ViewGroup,
         size: GoogleENative,
-        adCallback: NativeAdCallback
+        adCallback: NativeCallBackNew
     ) {
         if (!enableAds || !isNetworkConnected(activity)) {
-            adCallback.onAdFail()
+            adCallback.onAdFail("no inter net or disable ads")
             return
         }
         if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null){
-            adCallback.onAdFail()
+            adCallback.onAdFail("no inter net or disable ads")
             return
         }
         nativeAdLoader = MaxNativeAdLoader(idAd, activity)
@@ -836,7 +846,10 @@ object ApplovinUtil : LifecycleObserver {
         val shimmerFrameLayout: ShimmerFrameLayout =
             tagView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmer()
-        nativeAdLoader.setRevenueListener { p0 -> AdjustUtils.postRevenueAdjustMax(p0) }
+        nativeAdLoader.setRevenueListener { p0 ->
+            adCallback.onAdRevenuePaid(p0)
+            AdjustUtils.postRevenueAdjustMax(p0)
+        }
         nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
 
             override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
@@ -852,14 +865,14 @@ object ApplovinUtil : LifecycleObserver {
                 shimmerFrameLayout.stopShimmer()
                 nativeAdContainer.removeAllViews()
                 nativeAdContainer.addView(nativeAdView)
-                adCallback.onNativeAdLoaded()
+                adCallback.onNativeAdLoaded(ad,nativeAdView)
 
             }
 
             override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
                 shimmerFrameLayout.stopShimmer()
                 nativeAdContainer.removeAllViews()
-                adCallback.onAdFail()
+                adCallback.onAdFail(error.code.toString())
             }
 
             override fun onNativeAdClicked(ad: MaxAd) {
@@ -1232,7 +1245,10 @@ object ApplovinUtil : LifecycleObserver {
         }
         nativeHolder.isLoad = true
         nativeHolder.nativeAdLoader = MaxNativeAdLoader(nativeHolder.adsId, activity)
-        nativeHolder.nativeAdLoader?.setRevenueListener { ad -> AdjustUtils.postRevenueAdjustMax(ad) }
+        nativeHolder.nativeAdLoader?.setRevenueListener { ad ->
+            adCallback.onAdRevenuePaid(ad)
+            AdjustUtils.postRevenueAdjustMax(ad)
+        }
         nativeHolder.nativeAdLoader?.setNativeAdListener(object : MaxNativeAdListener() {
             override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
                 // Cleanup any pre-existing native ad to prevent memory leaks.
@@ -1379,7 +1395,10 @@ object ApplovinUtil : LifecycleObserver {
             tagView.findViewById(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmer()
 
-        nativeHolder.nativeAdLoader?.setRevenueListener { ad -> AdjustUtils.postRevenueAdjustMax(ad)}
+        nativeHolder.nativeAdLoader?.setRevenueListener { ad ->
+            adCallback.onAdRevenuePaid(ad)
+            AdjustUtils.postRevenueAdjustMax(ad)
+        }
         nativeHolder.nativeAdLoader?.setNativeAdListener(object : MaxNativeAdListener() {
             override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
                 if (nativeHolder.native != null) {
@@ -1451,7 +1470,10 @@ object ApplovinUtil : LifecycleObserver {
             tagView.findViewById(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmer()
 
-        nativeHolder.nativeAdLoader?.setRevenueListener { ad -> AdjustUtils.postRevenueAdjustMax(ad)}
+        nativeHolder.nativeAdLoader?.setRevenueListener { ad ->
+            adCallback.onAdRevenuePaid(ad)
+            AdjustUtils.postRevenueAdjustMax(ad)
+        }
         nativeHolder.nativeAdLoader?.setNativeAdListener(object : MaxNativeAdListener() {
             override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
                 shimmerFrameLayout.stopShimmer()
@@ -1500,6 +1522,5 @@ object ApplovinUtil : LifecycleObserver {
         Log.e("isNetworkConnected", "0" + vau)
         return vau
     }
-
 
 }
